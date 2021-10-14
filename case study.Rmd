@@ -24,30 +24,88 @@ nyc_airbnb %>%
 ```
 
 Brainstorming questions
-_Does rating vary by neighborhood, room type, or both?_
-_How is price related to other variables?_
-_Where are rentals located?_
-## 
+## rename neighborhood group
 ```{r}
-
+nyc_airbnb = 
+  nyc_airbnb %>% 
+  rename(borough = neighbourhood_group)
 ```
 
-## Is the average length of stay related to neighbourhood_group?
-```{r}
 
+## is room type related to neighborhood?
+```{r}
+nyc_airbnb %>% 
+  group_by(borough, room_type) %>% 
+  summarize(med_price = median(price, na.rm = TRUE)) %>% 
+  pivot_wider(
+    names_from = room_type,
+    values_from = med_price)
 ```
 
-## 
+## is price related to review?
 ```{r}
-
+nyc_airbnb %>%
+ group_by(borough, neighbourhood) %>%
+ summarize(
+   mean_price = mean(price, na.rm = TRUE),
+   mean_review = mean(review_scores_location, na.rm = TRUE)
+ ) %>% 
+  ggplot(aes(x = mean_review, y = mean_price)) + 
+  geom_point() + 
+  facet_grid(~borough)
 ```
 
-## 
+## is availability related to price?
 ```{r}
-
+nyc_airbnb %>%
+  group_by(borough, neighbourhood) %>%
+ summarize(mean_price = mean(price, na.rm = TRUE),
+   availability = mean(availability_365, na.rm = TRUE)
+ ) %>% 
+  ggplot(aes(x = availability, y = mean_price)) + 
+  geom_point() + 
+  facet_grid(~borough)
 ```
 
-## 
+## is neighborhood related to price?
 ```{r}
+nyc_airbnb %>%
+  mutate(neighbourhood = as.factor(neighbourhood)) %>%
+  filter(borough == "Manhattan") %>% 
+  mutate(neighbourhood = fct_reorder(neighbourhood, price, na.rm = TRUE)) %>%
+  ggplot(aes(x = neighbourhood, y = price)) +
+  geom_boxplot() +
+  coord_flip() + 
+  ylim(0, 1000)
+```
 
+## sampling 5000 to see the spatial relationship between price and geo
+```{r}
+nyc_airbnb %>%
+  filter(price < 500) %>%
+  sample_n(5000) %>%
+  ggplot(aes(x = lat, y = long, color = price)) + 
+  geom_point(alpha = 0.5)
+```
+
+```{r}
+nyc_airbnb =
+  nyc_airbnb %>% 
+  mutate(
+    stars = review_scores_location/2)
+
+nyc_airbnb %>% 
+  filter(borough == "Manhattan") %>% 
+  mutate(
+    label = str_c("<b>Stars: ", stars, "</b><br>Price: ", price , sep = "")
+  ) %>% 
+  sample_n(5000) %>% 
+  leaflet() %>% 
+  addTiles() %>%
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  addCircleMarkers(
+    ~lat, ~long,
+    color = ~pal(stars),
+    radius = 1,
+    popup = ~ label)
 ```
