@@ -1,0 +1,42 @@
+---
+title: "Case Study"
+author: "Yujia Li"
+date: "10/14/2021"
+output: github_document
+---
+
+```{r setup}
+library(tidyverse)
+library(p8105.datasets)
+data(nyc_airbnb)
+```
+
+##  
+```{r airbnb in NYC}
+
+```
+
+## 
+```{r}
+
+```
+
+## 
+```{r}
+
+```
+
+## 
+```{r}
+
+```
+
+## 
+```{r}
+
+```
+
+## 
+```{r}
+
+```
