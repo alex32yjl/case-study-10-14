@@ -11,17 +11,28 @@ library(p8105.datasets)
 data(nyc_airbnb)
 ```
 
-##  
+## Descriptive Statistic
 ```{r airbnb in NYC}
+utils::View(nyc_airbnb)
 
+str(nyc_airbnb)
+
+nyc_airbnb %>%
+  count(room_type)
+nyc_airbnb %>%
+  count(neighbourhood_group)
 ```
 
+Brainstorming questions
+_Does rating vary by neighborhood, room type, or both?_
+_How is price related to other variables?_
+_Where are rentals located?_
 ## 
 ```{r}
 
 ```
 
-## 
+## Is the average length of stay related to neighbourhood_group?
 ```{r}
 
 ```
